@@ -1,61 +1,43 @@
 import asyncio
 
-from orchestrator.planner import Planner
 from orchestrator.agent_factory import AgentFactory
 
-from runtime.registry import AgentRegistry
 from runtime.agent_runtime import AgentRuntime
 
-from tools.memory import Memory
+from runtime.registry import AgentRegistry
 
 
 async def main():
 
-    user_request = input(
-        "What agent would you like me to create?\n> "
+    request = input(
+        "Create what kind of agent?\n> "
     )
-
-    planner = Planner()
 
     factory = AgentFactory()
 
     registry = AgentRegistry()
 
-    memory = Memory()
-
-    agent_type = planner.analyze_task(
-        user_request
-    )
-
-    agent_spec = factory.create_agent(
-        agent_type
+    spec = factory.create_agent(
+        request
     )
 
     registry.register(
-        agent_spec
+        spec
     )
 
     runtime = AgentRuntime(
-        agent_spec
+        spec
     )
 
     result = await runtime.run(
-        user_request
+        request
     )
 
-    memory.save(
-        result
-    )
+    print("\nAgent Generated:")
+    print(spec)
 
-    print("\nRegistered Agents:")
-    print(
-        registry.list_agents()
-    )
-
-    print("\nHistory:")
-    print(
-        memory.get_history()
-    )
+    print("\nResult:")
+    print(result)
 
 
 if __name__ == "__main__":
